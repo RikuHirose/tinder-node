@@ -1,12 +1,10 @@
 require('dotenv').config({ path: __dirname + '/../.env' })
-const axios = require('axios')
-const fs = require('fs')
 const facebookUserId = process.env.facebookUserId
 const facebookToken = process.env.facebookToken
 
 
 const {TinderClient, GENDERS, GENDER_SEARCH_OPTIONS} = require('tinder-client')
-const TINDER_NUM = process.env.TINDER_NUM || 2
+const TINDER_NUM = process.env.TINDER_NUM || 1
 const face = require('./face.js')
 const tinderAuth = require('./tinderAuth.js')
 const autoSwipe = require('./autoSwipe.js')
@@ -35,23 +33,26 @@ async function diplayCommits() {
     while(count < TINDER_NUM) {
       // リコメンドを取得し0人だったら終了
       let recommendations = await tinder_client.getRecommendations()
-      console.log(recommendations.results.length)
 
-      // if(recommendations.results.length === 0) break
+      if(recommendations.results.length === 0) break
 
       for (var i = 0; i < recommendations.results.length; i++) {
         let girl = recommendations.results[i]
 
+        console.log(`${girl.name}さんの顔写真を判定中....`)
         // score return
         let score = await autoSwipe.getFaceScore(girl, tinder_client)
         if(score == false || score == NaN) {
-          console.log(1)
           continue
 
         } else {
           // swipe
           // send message after match
-          console.log(score)
+          if(score > 60) {
+            console.log(`${score}点の${girl.name}さんをLikeしました`)
+          } else {
+            continue
+          }
         }
       }
 
