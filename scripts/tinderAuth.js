@@ -1,6 +1,5 @@
 require('dotenv').config({ path: __dirname + '/../.env' })
 const puppeteer = require('puppeteer')
-const axios = require('axios')
 const FB_AUTHENTICATION_URL = 'https://www.facebook.com/dialog/oauth?client_id=464891386855067&redirect_uri=fb464891386855067://authorize/&&scope=user_birthday,user_photos,user_education_history,email,user_relationship_details,user_friends,user_work_history,user_likes&response_type=token'
 
 
@@ -10,7 +9,7 @@ module.exports = {
   getAccessToken() {
     return new Promise(async (resolve, reject) => {
       // headless chrome起動 & セットアップ
-      const params = process.env.CI ? {args: ['--no-sandbox', '--disable-setuid-sandbox']} : {headless: true, slowMo: 10}
+      const params = process.env.CI ? {args: ['--no-sandbox', '--disable-setuid-sandbox']} : {headless: false, slowMo: 10}
       const browser = await puppeteer.launch(params)
       const page = await browser.newPage()
 

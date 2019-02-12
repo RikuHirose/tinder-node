@@ -13,7 +13,7 @@ const autoSwipe = require('./autoSwipe.js')
 
 async function diplayCommits() {
   try{
-    // const facebookToken = await tinderAuth.getAccessToken()
+    const facebookToken = await tinderAuth.getAccessToken()
     // console.log(facebookToken)
     const tinder_client = await TinderClient.create({ facebookUserId, facebookToken })
 
@@ -27,6 +27,7 @@ async function diplayCommits() {
     //     maximumRangeInKilometers: 30
     //   }
     // })
+
 
     // 以下スワイプ
     let count = 0
@@ -49,7 +50,17 @@ async function diplayCommits() {
           // swipe
           // send message after match
           if(score > 60) {
-            console.log(`${score}点の${girl.name}さんをLikeしました`)
+            let liked = await tinder_client.like(girl._id)
+
+            // matchしたらmessageを送る
+            if(liked.match != false) {
+              const sendMessage = await tinder_client.messageMatch({ matchId: liked.match._id, message: 'Hi!' });
+              console.log(`${score}点の${girl.name}さんとMatchしました!!`)
+
+            } else {
+              console.log(`${score}点の${girl.name}さんをLikeしました`)
+            }
+
           } else {
             continue
           }

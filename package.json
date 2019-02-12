@@ -15,7 +15,7 @@
     "puppeteer": "^1.12.2",
     "request": "^2.88.0",
     "request-promise": "^4.2.2",
-    "tinder-client": "^3.0.0",
+    "tinder-client": "^3.0.1",
     "xmlhttprequest": "^1.8.0"
   }
 }
