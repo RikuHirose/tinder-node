@@ -13,7 +13,7 @@ const autoSwipe = require('./autoSwipe.js')
 
 async function diplayCommits() {
   try{
-    const facebookToken = await tinderAuth.getAccessToken()
+    // const facebookToken = await tinderAuth.getAccessToken()
     // console.log(facebookToken)
     const tinder_client = await TinderClient.create({ facebookUserId, facebookToken })
 
