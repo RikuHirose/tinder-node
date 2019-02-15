@@ -38,6 +38,7 @@ module.exports = {
         .then((res) => {
           // こういうケースは無視
           // https://images-ssl.gotinder.com/5859968f38b602fe090ae0a5/1080x1080_2d33fb1b-0074-4473-bde7-251724903e7c.jpg
+
           if(res.faces.length != 0) {
             resolve(res.faces)
           } else {

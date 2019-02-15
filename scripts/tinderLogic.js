@@ -18,8 +18,7 @@ module.exports = {
             resolve(faceScore)
           }
 
-        }
-        else {
+        } else {
           let faceScores = []
 
           for (var i = 0; i < user.photos.length; i++) {
@@ -31,6 +30,7 @@ module.exports = {
             // if(faceInfo[0] != null) {
             //   faceScores.push(faceInfo[0]['attributes']['beauty']['female_score'])
             // }
+            console.log(user.photos[i]['url'])
             if(faceInfo == false) {
               continue
             } else {
@@ -50,14 +50,14 @@ module.exports = {
 
     })
   },
-  checkUser(tinder_client, user) {
+  checkUser(tinder_client, user, ngWord) {
     return new Promise(async (resolve, reject) => {
       if(user.bio == false) {
         resolve(user)
       } else {
         // 除外したいword
-        let x = ['ID', 'LINE', 'ladyboy']
-        let matchArr = user.bio.match(new RegExp(x.join("|")))
+        // let x = ['ID', 'LINE', 'ladyboy']
+        let matchArr = user.bio.match(new RegExp(ngWord.join("|")))
 
         if(matchArr != null) {
           resolve(false)
@@ -76,12 +76,12 @@ module.exports = {
 
     })
   },
-  sendMessage(tinder_client, user, liked, score) {
+  sendMessage(tinder_client, user, liked, score, firstMessage) {
     return new Promise(async (resolve, reject) => {
 
       // matchしたらmessageを送る
       if(liked.match != false) {
-        let sendMessage = await tinder_client.messageMatch({ matchId: liked.match._id, message: 'Hi!' });
+        let sendMessage = await tinder_client.messageMatch({ matchId: liked.match._id, message: firstMessage });
         let message = (`${score}点の${user.name}さんとMatchしました!!`)
         resolve(message)
 

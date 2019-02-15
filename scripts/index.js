@@ -8,6 +8,7 @@ const TINDER_NUM = process.env.TINDER_NUM || 3
 const face = require('./face.js')
 const tinderAuth = require('./tinderAuth.js')
 const tinderLogic = require('./tinderLogic.js')
+const geoCording = require('./geoCording.js')
 
 
 
@@ -17,20 +18,17 @@ async function diplayCommits() {
     // console.log(facebookToken)
     const tinder_client = await TinderClient.create({ facebookUserId, facebookToken })
 
-     // tinderユーザー設定更新
-    // const user_info = await tinder_client.updateProfile({
-    //   userGender: GENDERS.male,
-    //   searchPreferences: {
-    //     maximumAge: 25,
-    //     minimumAge: 18,
-    //     genderPreference: GENDER_SEARCH_OPTIONS.female,
-    //     maximumRangeInKilometers: 30
-    //   }
-    // })
-    // let location = await tinder_client.temporarilyChangeLocation({ latitude: '35.6603785', longitude: '139.7073692' })
-    // console.log(location)
+    const parameters = {
+      // location: '渋谷', // swipeしたい場所を入力(有料会員のみ)
+      score: 60,
+      firstMessage: 'Hi!',
+      ngWord: ['ID', 'LINE', 'ladyboy']
+    }
 
-
+    // let location = parameters.location
+    // let place = await geoCording.getLatLng(location)
+    // await tinder_client.temporarilyChangeLocation({ latitude: place[0], longitude: place[1] })
+    await tinder_client.resetTemporaryLocation()
 
     // 以下スワイプ
     let count = 0
@@ -46,21 +44,23 @@ async function diplayCommits() {
         console.log(`${user.name}さんの顔写真を判定中....`)
 
         let score = await tinderLogic.getFaceScore(user, tinder_client)
-        if(score == false || score == NaN) {
+        console.log(score)
+        if(score === false || isNaN(score)) {
+          console.log(11);
           continue
 
         } else {
-          if(score < 75) {
+          if(score < parameters.score) {
             continue
           } else {
 
             // swipe
             // send message after match
-            user = await tinderLogic.checkUser(tinder_client, user)
+            user = await tinderLogic.checkUser(tinder_client, user, parameters.ngWord)
             if(user == false) continue
 
             let liked = await tinderLogic.swipe(tinder_client, user)
-            let message = await tinderLogic.sendMessage(tinder_client, user, liked, score)
+            let message = await tinderLogic.sendMessage(tinder_client, user, liked, score, parameters.firstMessage)
             console.log(message)
 
           }
