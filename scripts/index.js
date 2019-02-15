@@ -14,21 +14,24 @@ const geoCording = require('./geoCording.js')
 
 async function diplayCommits() {
   try{
+    // facebookTokenは2時間で失効する
     // const facebookToken = await tinderAuth.getAccessToken()
     // console.log(facebookToken)
     const tinder_client = await TinderClient.create({ facebookUserId, facebookToken })
 
     const parameters = {
-      // location: '渋谷', // swipeしたい場所を入力(有料会員のみ)
+      location: '渋谷', // swipeしたい場所を入力(有料会員のみ)
       score: 60,
       firstMessage: 'Hi!',
-      ngWord: ['ID', 'LINE', 'ladyboy']
+      ngWord: ['ID', 'LINE', 'ladyboy'] //プロフィールのNGキーワードを指定可能
     }
 
-    // let location = parameters.location
-    // let place = await geoCording.getLatLng(location)
-    // await tinder_client.temporarilyChangeLocation({ latitude: place[0], longitude: place[1] })
-    await tinder_client.resetTemporaryLocation()
+    let location = parameters.location
+    let place = await geoCording.getLatLng(location)
+    await tinder_client.temporarilyChangeLocation({ latitude: place[0], longitude: place[1] })
+
+    // 場所を現在地に戻す
+    // await tinder_client.resetTemporaryLocation()
 
     // 以下スワイプ
     let count = 0
@@ -44,9 +47,7 @@ async function diplayCommits() {
         console.log(`${user.name}さんの顔写真を判定中....`)
 
         let score = await tinderLogic.getFaceScore(user, tinder_client)
-        console.log(score)
         if(score === false || isNaN(score)) {
-          console.log(11);
           continue
 
         } else {
@@ -60,8 +61,8 @@ async function diplayCommits() {
             if(user == false) continue
 
             let liked = await tinderLogic.swipe(tinder_client, user)
-            let message = await tinderLogic.sendMessage(tinder_client, user, liked, score, parameters.firstMessage)
-            console.log(message)
+            let resMessage = await tinderLogic.sendMessage(tinder_client, user, liked, score, parameters.firstMessage)
+            console.log(resMessage)
 
           }
         }

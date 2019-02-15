@@ -4,7 +4,6 @@ const photos = [
   'https://images-ssl.gotinder.com/5b7eaa62aacd13480abf01c8/1080x1350_83fc9ece-53a1-492e-8684-284399726a3b.webp',
   'https://images-ssl.gotinder.com/5b7eaa62aacd13480abf01c8/1080x1350_abac234c-8c0b-4a33-bda8-3e6c68b82b1d.webp',
   'https://images-ssl.gotinder.com/5b7eaa62aacd13480abf01c8/1080x1350_5a069b62-4c0e-4786-8b4d-660b66c3a395.webp',
-  'https://images-ssl.gotinder.com/5b7eaa62aacd13480abf01c8/1080x1350_f99a1aae-374a-4cca-b14c-31d12cfcf6a8.jpg',
   'https://images-ssl.gotinder.com/5c4d6461899eb911002b7f0c/1080x1080_df1ddd1c-181f-4ebc-abc6-81330b192229.jpg',
 ]
 // const photos = [
@@ -19,9 +18,12 @@ const photos = [
 
 async function diplayCommits() {
 
-  let faceScores = []
+let faceScores = []
 for (var i = 0; i < photos.length; i++) {
-  let faceInfo = await face.detectFace(photos[i])
+
+  let photoUrl = photos[i].replace(/webp/i, 'jpg')
+
+  let faceInfo = await face.detectFace(photoUrl)
 
   if(faceInfo == false) {
     continue
@@ -34,6 +36,8 @@ for (var i = 0; i < photos.length; i++) {
 
 let faceScore = await face.calcFaceMedian(faceScores)
 console.log(faceScore)
+
+
 }
 
 diplayCommits()

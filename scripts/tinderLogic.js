@@ -1,5 +1,6 @@
 require('dotenv').config({ path: __dirname + '/../.env' })
 const face = require('./face.js')
+const helper = require('./helper.js')
 
 
 module.exports = {
@@ -8,7 +9,7 @@ module.exports = {
        try {
         // プロフィール画像が一枚
         if(user.photos.length === 1) {
-          let faceInfo = await face.detectFace(user.photos[0]['url'])
+          let faceInfo = await face.detectFace(await helper.webp2Jpg(user.photos[0]['url']))
 
           if(faceInfo == false) {
             resolve(false)
@@ -22,15 +23,11 @@ module.exports = {
           let faceScores = []
 
           for (var i = 0; i < user.photos.length; i++) {
-            let faceInfo = await face.detectFace(user.photos[i]['url'])
+            let faceInfo = await face.detectFace(await helper.webp2Jpg(user.photos[i]['url']))
 
             // こういうケースは無視
             // https://images-ssl.gotinder.com/5a087f81d181224304422241/1080x1350_01a5b845-c428-40e3-86c9-07082865d657.jpg
 
-            // if(faceInfo[0] != null) {
-            //   faceScores.push(faceInfo[0]['attributes']['beauty']['female_score'])
-            // }
-            console.log(user.photos[i]['url'])
             if(faceInfo == false) {
               continue
             } else {
