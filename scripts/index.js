@@ -4,10 +4,10 @@ const facebookToken = process.env.facebookToken
 
 
 const {TinderClient, GENDERS, GENDER_SEARCH_OPTIONS} = require('tinder-client')
-const TINDER_NUM = process.env.TINDER_NUM || 1
+const TINDER_NUM = process.env.TINDER_NUM || 3
 const face = require('./face.js')
 const tinderAuth = require('./tinderAuth.js')
-const autoSwipe = require('./autoSwipe.js')
+const tinderLogic = require('./tinderLogic.js')
 
 
 
@@ -27,6 +27,9 @@ async function diplayCommits() {
     //     maximumRangeInKilometers: 30
     //   }
     // })
+    // let location = await tinder_client.temporarilyChangeLocation({ latitude: '35.6603785', longitude: '139.7073692' })
+    // console.log(location)
+
 
 
     // 以下スワイプ
@@ -38,31 +41,28 @@ async function diplayCommits() {
       if(recommendations.results.length === 0) break
 
       for (var i = 0; i < recommendations.results.length; i++) {
-        let girl = recommendations.results[i]
+        let user = recommendations.results[i]
 
-        console.log(`${girl.name}さんの顔写真を判定中....`)
-        // score return
-        let score = await autoSwipe.getFaceScore(girl, tinder_client)
+        console.log(`${user.name}さんの顔写真を判定中....`)
+
+        let score = await tinderLogic.getFaceScore(user, tinder_client)
         if(score == false || score == NaN) {
           continue
 
         } else {
-          // swipe
-          // send message after match
-          if(score > 60) {
-            let liked = await tinder_client.like(girl._id)
-
-            // matchしたらmessageを送る
-            if(liked.match != false) {
-              const sendMessage = await tinder_client.messageMatch({ matchId: liked.match._id, message: 'Hi!' });
-              console.log(`${score}点の${girl.name}さんとMatchしました!!`)
-
-            } else {
-              console.log(`${score}点の${girl.name}さんをLikeしました`)
-            }
-
-          } else {
+          if(score < 75) {
             continue
+          } else {
+
+            // swipe
+            // send message after match
+            user = await tinderLogic.checkUser(tinder_client, user)
+            if(user == false) continue
+
+            let liked = await tinderLogic.swipe(tinder_client, user)
+            let message = await tinderLogic.sendMessage(tinder_client, user, liked, score)
+            console.log(message)
+
           }
         }
       }

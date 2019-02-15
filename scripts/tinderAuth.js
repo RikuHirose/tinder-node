@@ -9,7 +9,7 @@ module.exports = {
   getAccessToken() {
     return new Promise(async (resolve, reject) => {
       // headless chrome起動 & セットアップ
-      const params = process.env.CI ? {args: ['--no-sandbox', '--disable-setuid-sandbox']} : {headless: false, slowMo: 10}
+      const params = process.env.CI ? {args: ['--no-sandbox', '--disable-setuid-sandbox']} : {headless: true, slowMo: 10}
       const browser = await puppeteer.launch(params)
       const page = await browser.newPage()
 
